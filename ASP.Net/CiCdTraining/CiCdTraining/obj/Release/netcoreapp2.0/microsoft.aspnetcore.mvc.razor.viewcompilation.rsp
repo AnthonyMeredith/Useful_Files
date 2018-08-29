@@ -1,0 +1,12 @@
+C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining
+--output-path=obj\Release\netcoreapp2.0\
+--application-name=CiCdTraining
+--content-root=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Form\Home.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Form\Message.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Home\Index.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Shared\Error.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Shared\_Layout.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\Shared\_ValidationScriptsPartial.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\_ViewImports.cshtml
+--file=C:\Users\anthony\Desktop\CiCdTraining\CiCdTraining\Views\_ViewStart.cshtml

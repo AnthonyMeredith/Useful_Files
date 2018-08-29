@@ -1,0 +1,129 @@
+======================================================================================================================================
+--------------------DOCKER-------------------------------
+======================================================================================================================================
+
+https://www.tripwire.com/state-of-security/security-data-protection/securing-entire-container-stack-lifecycle-pipeline-part-1/
+
+https://docs.docker.com/compliance/reference/800-53/
+
+https://www.cisecurity.org/benchmark/docker/
+
+http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-190.pdf
+
+https://hubblestack.io/
+
+https://github.com/hubblestack/hubble/blob/develop/README.md
+
+http://www.rudder-project.org/site/
+
+https://docs.docker.com/docker-cloud/builds/image-scan/
+
+https://www.csoonline.com/article/3215134/application-development/top-5-container-mistakes-that-cause-security-problems
+
+https://www.csoonline.com/article/3215134/application-development/top-5-container-mistakes-that-cause-security-problems.html
+
+https://csrc.nist.gov/publications/detail/sp/800-190/final
+
+=======================================================================================================================================
+
+https://securecodewarrior.com/
+
+https://www.hackthebox.eu/
+
+https://www.cybrary.it/
+
+=======================================================================================================================================
+
+You can find me online at:
+
+My website: https://geekysrm.github.io
+
+My Blog: https://geekysrm.github.io/blog
+
+Twitter: https://twitter.com/SoumyaRnMohanty
+
+Github: https://github.com/geekysrm
+
+Facebook: https://facebook.com/geekysrm
+
+Medium: https://medium.com/@geekysrm
+
+=======================================================================================================================================
+DevSecOps tooling
+=======================================================================================================================================
+
+Threadfix and other DevSecOps tooling is essential.
+
+Tools I've got a very long list and some proprietary.  CORE IMPACT worth the investment in your tooling but it must feed into common work flows. So we need to automate as much as possible. intergrate as much as possible. penetration testing results need to feed into Dev and Ops work flows and unit security testing must be undertaken.
+
+Kali Linux includes security tools, such as:
+
+Aircrack-ng (https://en.wikipedia.org/wiki/Aircrack-ng)
+Burp suite (https://en.wikipedia.org/wiki/Burp_suite)
+Cisco Global Exploiter, a hacking tool used to find and exploit vulnerabilities in Cisco Network systems
+Ettercap (https://en.wikipedia.org/wiki/Ettercap_(software))
+John the Ripper (https://en.wikipedia.org/wiki/John_the_Ripper)
+Kismet (https://en.wikipedia.org/wiki/Kismet_(software))
+Maltego (https://en.wikipedia.org/wiki/Maltego)
+Metasploit (https://en.wikipedia.org/wiki/Metasploit) framework
+Nmap (https://en.wikipedia.org/wiki/Nmap)
+OWASP ZAP (https://en.wikipedia.org/wiki/OWASP_ZAP)
+Social engineering (https://en.wikipedia.org/wiki/Social_engineering_(political_science)) tools.
+Wireshark (https://en.wikipedia.org/wiki/Wireshark)
+* Responder
+* Firefox
+* Python
+
+
+==========================================================================================================================================
+Hacking tool
+==========================================================================================================================================
+
+https://github.com/byt3bl33d3r/CrackMapExec
+https://github.com/shawarkhanethicalhacker/D-TECT
+https://github.com/byt3bl33d3r/CrackMapExec
+https://www.synopsys.com/blogs/software-security/top-10-free-hacking-tools-for-penetration-testers/
+
+
+============================================================================================================================================
+
+
+couple of useful links:
+
+https://pen-testing.sans.org/blog/2013/11/21/network-pen-testing-tips-tricks-tools-resources
+
+https://www.csoonline.com/article/2126101/access-control/10-tips-for-a-successful-penetration-testing-program.html  (you need to register for this site)
+
+For anyone looking for a pen-testing tutorial:
+
+https://www.tutorialspoint.com/penetration_testing/index.htm 
+
+https://www.pentestgeek.com/
+
+https://www.crest-approved.org/wp-content/uploads/CREST-Penetration-Testing-Guide.pdf
+
+http://www.computerweekly.com/tip/Corporate-penetration-testing-Best-practices-for-thorough-assessments
+
+https://www.cybrary.it/forums/topic/online-pen-testing-practice-sites/
+
+https://www.concise-courses.com/scary-pentest-tools/
+
+https://www.rapid7.com/info/under-the-hoodie/
+
+http://www.itpro.co.uk/penetration-testing/30697/kali-linux-comes-to-windows-10-handing-hacking-tools-to-pen-testers
+
+www.sans.org
+
+http://nvd.nist.gov
+
+http://cve.mitre.org
+
+www.securityfocus.com
+
+www.securitywizardry.com/radar.htm
+
+
+
+
+
+

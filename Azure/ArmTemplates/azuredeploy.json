@@ -1,0 +1,85 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {},
+  "variables": { },
+  "resources": [
+    {
+      "name": "TestStorage",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location":"West Europe",
+      "apiVersion": "2015-06-15",
+      "properties": { "accountType": "Standard_LRS" }
+    },
+    {
+        "name": "TestVNet",
+        "type": "Microsoft.Network/virtualNetworks",
+        "location":"West Europe",
+        "apiVersion": "2017-06-01",
+        "properties": {
+            "addressSpace": { "addressPrefixes": ["10.0.0.0/16"] },
+            "subnets":[
+                {
+                    "name": "TestSubnet",
+                    "properties":{ "addressPrefix": "10.0.0.0/24" }
+                }
+            ]
+        }
+    },
+    {
+        "name": "TestPubIP",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "location":"West Europe",
+        "apiVersion": "2017-10-01",
+        "properties": {
+            "publicIPAllocationMethod": "Dynamic",
+            "dnsSettings": { "domainManeLabel": "Test" }
+        }
+    },
+    {
+        "name": "TestNIC",
+        "type": "Microsoft.Network/networkInterfaces",
+        "location":"West Europe",
+        "apiVersion": "2015-06-15",
+        "dependsOn": [
+            "Microsoft.Network/publicIPAddresses/TestPubIP", "Microsoft.Network/VirtualNetworks/TestVNet" ],
+        "properties": {
+            "ipConfigurations":[
+                {   "name": "TestIPConfig",
+                    "properties":{
+                        "privateIPAllocationMethod": "Dynamic",
+                        "publicIPAddress": { "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'TestPubIP')]" },
+                        "subnet" : { "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'TestVNet'), '/subnets/TestSubnet')]" }
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "TestVM",
+        "type": "Microsoft.Compute/virtualMachines",
+        "location":"West Europe",
+        "apiVersion": "2017-03-30",
+        "dependsOn":[
+            "Microsoft.Storage/storageAccounts/TestStorage", "Microsoft.Network/networkInterfaces/TestNIC"
+        ],
+        "properties": { 
+            "hardwareProfile": { "vmSize": "Standard_D1_v2" },
+            "osProfile": { "computerName": "TestVM", "adminUsername": "Anthony", "adminPassword": "Password123" },
+            "storageProfile": {
+                "imageReference": { "publisher": "Canonical", "offer": "UbuntuServer", "sku": "15.10", "version": "latest"},
+                "osDisk": {
+                    "name": "TestOsDisk",
+                    "vhd": { "uri": "https://TestStorage.blob.core.windows.net/vhds/TestOsDisk.vhd"},
+                    "createOption": "FromImage"
+                     }              
+                },
+            "NetworkProfile": {
+                "networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', TestNIC)]" } ]
+            }
+               
+        }
+    }
+    ],
+    "outputs": { }
+}   

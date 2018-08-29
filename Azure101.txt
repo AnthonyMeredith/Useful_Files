@@ -1,0 +1,22 @@
+Network Security Groups (NSGs)
+GatewaySubnet
+ExpressRoute and Site-to-Site (S2S) VPN Gateways
+Network Virtual Appliances
+User Defined Routes (UDRs) in Route Tables
+vNet Peering
+Region to region S2S VPNs
+
+Azure Hybrid Use Benefit
+Benefits of Managed Disks vs manual storage accounts
+Deallocation vs shutdown in the remote desktop console
+
+Browse to the Services tab on Azure Docs, and then find the Azure Resource Manager tile in the Monitoring + Management area. Discover the export template functionality, as well as the JSON template structure.
+Click on Add within the Azure101IaaS Resource Group, and find Template Deployment
+In the Load a GitHub Quickstart template, type “load” and select one of the community templates and accompanying parameters file
+Search the Azure Quickstart Templates GitHub repo to find the same template
+
+Look at 
+
+DevOps Project!!
+App Insights!!
+IoT Machine Learning

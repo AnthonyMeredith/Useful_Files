@@ -1,0 +1,52 @@
+{
+  "builders": [{
+    "type": "azure-arm",
+	"name": "buildserver",
+
+    "client_id": "3154bde2-bec1-43cd-b5e7-96f417c4e369",
+    "client_secret": "Password1234",
+    "tenant_id": "eaecf0d8-a78a-45b6-a9b1-393398fb1e1a",
+    "subscription_id": "a01854cc-7e88-4f1c-aa25-c59ec25391e4",
+    "object_id": "88ec94ac-c2ba-4051-9a38-851c8a78f077",
+
+    "managed_image_resource_group_name": "myResourceGroup",
+    "managed_image_name": "CiCdTraining",
+
+  "os_type": "Windows",
+    "image_publisher": "MicrosoftSQLServer",
+    "image_offer": "SQL2017-WS2016",
+    "image_sku": "Enterprise",
+
+    "communicator": "winrm",
+    "winrm_use_ssl": "true",
+    "winrm_insecure": "true",
+    "winrm_timeout": "3m",
+    "winrm_username": "packer",
+
+    "azure_tags": {
+        "dept": "Engineering",
+        "task": "Image deployment"
+    },
+
+    "location": "West Europe",
+    "vm_size": "Standard_D4S_v3"
+  }],
+  
+  "provisioners": [  
+	 
+	  {
+      "type": "file",
+      "source": "scripts/",
+      "destination": "D:/scripts"
+       },
+	  
+  {
+    "type": "powershell",
+    "environment_vars": "WINRMPASS={{.WinRMPassword}}",
+    "inline": ["Write-Host \"Automatically generated aws password is: $Env:WINRMPASS and deployment name is $Env:PACKER_BUILD_NAME\"",
+	  "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Install-TeamCity.ps1 -AdminPassword $Env:WINRMPASS \"",
+	  "& $env:SystemRoot\\System32\\Sysprep\\Sysprep.exe /oobe /generalize /quiet /quit",
+      "while($true) { $imageState = Get-ItemProperty HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Setup\\State | Select ImageState; if($imageState.ImageState -ne 'IMAGE_STATE_GENERALIZE_RESEAL_TO_OOBE') { Write-Output $imageState.ImageState; Start-Sleep -s 10  } else { break } }"
+    ]
+  }]
+}

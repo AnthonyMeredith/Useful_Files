@@ -1,0 +1,610 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"variables": {},
+	"parameters": {},
+	"resources": [
+		{
+			"name": "anthonystore",
+			"type": "Microsoft.Storage/storageAccounts",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"properties": {
+				"accountType": "Standard_LRS"
+			}
+		},
+		{
+			"name": "vnet",
+			"type": "Microsoft.Network/virtualNetworks",
+			"location": "West Europe",
+			"apiVersion": "2017-06-01",
+			"dependsOn": [
+				"Microsoft.Network/networkSecurityGroups/jumpNSG",
+				"Microsoft.Network/networkSecurityGroups/WebServerNSG",
+				"Microsoft.Network/networkSecurityGroups/applicationNSG",
+				"Microsoft.Network/networkSecurityGroups/dbNSG"
+			],
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.0.0.0/16"
+					]
+				},
+				"subnets": [
+					{
+						"name": "publicsubnet",
+						"properties": {
+							"addressPrefix": "10.0.0.0/24",
+							"networksecuritygroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'jumpNSG')]"
+							}
+						}
+					},
+					{
+						"name": "frontsubnet",
+						"properties": {
+							"addressPrefix": "10.0.1.0/24",
+							"networksecuritygroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'WebServerNSG')]"
+							}
+						}
+					},
+					{
+						"name": "appsubnet",
+						"properties": {
+							"addressPrefix": "10.0.2.0/24",
+							"networksecuritygroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'applicationNSG')]"
+							}
+						}
+					},
+					{
+						"name": "dbsubnet",
+						"properties": {
+							"addressPrefix": "10.0.3.0/24",
+							"networksecuritygroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'dbNSG')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "anthonypubip",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"location": "West Europe",
+			"apiVersion": "2017-10-01",
+			"properties": {
+				"publicIPAllocationMethod": "Dynamic",
+				"dnsSettings": {
+					"domainNameLabel": "anthonydomain"
+				}
+			}
+		},
+		{
+			"name": "LoadBalancerIp",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"location": "West Europe",
+			"apiVersion": "2017-08-01",
+			"properties": {
+				"publicIPAllocationMethod": "Static"
+			}
+		},
+		{
+			"name": "jumpNSG",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2017-06-01",
+			"location": "West Europe",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "allow-rdp-jumpbox",
+						"properties": {
+							"priority": 100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "185.38.247.178",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "block-inbound-jumpbox",
+						"properties": {
+							"priority": 999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					},
+					{
+						"name": "allow-rdp-Outbound",
+						"properties": {
+							"priority": 200,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "block-outbound-jumpbox",
+						"properties": {
+							"priority": 1999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "WebServerNSG",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2017-06-01",
+			"location": "West Europe",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "allow-rdp-WS",
+						"properties": {
+							"priority": 100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "allow-http-WS",
+						"properties": {
+							"priority": 200,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "80"
+						}
+					},
+					{
+						"name": "allow-https-WS",
+						"properties": {
+							"priority": 300,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "443"
+						}
+					},
+					{
+						"name": "block-inbound-WS",
+						"properties": {
+							"priority": 999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					},
+					{
+						"name": "block-outbound-WS",
+						"properties": {
+							"priority": 1999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "applicationNSG",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2017-06-01",
+			"location": "West Europe",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "allow-rdp-application",
+						"properties": {
+							"priority": 100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "block-inbound-application",
+						"properties": {
+							"priority": 999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					},
+					{
+						"name": "block-outbound-application",
+						"properties": {
+							"priority": 1999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "dbNSG",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2017-06-01",
+			"location": "West Europe",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "allow-rdp-database",
+						"properties": {
+							"priority": 100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "block-inbound-database",
+						"properties": {
+							"priority": 999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					},
+					{
+						"name": "block-outbound-database",
+						"properties": {
+							"priority": 1999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					}
+				]
+			}
+		},
+
+		{
+			"name": "jumpnic",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/publicIPAddresses/anthonypubip",
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "testipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIPAddress": {
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses', 'anthonypubip')]"
+							},
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/publicsubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "WebServerNIC",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/publicIPAddresses/anthonypubip",
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "testipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/frontsubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "appnic",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "appipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/appsubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "sqlnic",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "sqlipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/dbsubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"apiVersion": "2017-06-01",
+			"name": "LoadBalancer",
+			"type": "Microsoft.Network/loadBalancers",
+			"location": "West Europe",
+			"dependsOn": [
+				"[concat('Microsoft.Network/publicIPAddresses/', 'LoadBalancerIp')]"
+			],
+			"properties": {
+				"frontendIPConfigurations": [
+					{
+						"name": "loadBalancerFrontEnd",
+						"properties": {
+							"publicIPAddress": {
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses','LoadBalancerIp')]"
+							}
+						}
+					}
+				],
+				"backendAddressPools": [
+					{
+						"name": "loadBalancerBackEnd"
+					}
+				]
+			}
+		},
+		{
+			"name": "jumpbox",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/jumpnic"
+			],
+			"properties": {
+				"hardwareProfile": { "vmSize": "Standard_D1_v2" },
+				"osProfile": {
+					"computerName": "servervm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "2016-Datacenter",
+						"version": "latest"
+					},
+					"osDisk": {
+						"name": "osdiskjump",
+						"createOption": "FromImage"
+					}
+				},
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'jumpnic')]" } ]
+				}
+
+			}
+		},
+		{
+			"name": "WebServer",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/WebServerNIC"
+			],
+			"properties": {
+				"hardwareProfile": { "vmSize": "Standard_D1_v2" },
+				"osProfile": {
+					"computerName": "servervm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "2016-Datacenter",
+						"version": "latest"
+					},
+					"osDisk": {
+						"name": "osdiskfront",
+						"createOption": "FromImage"
+					}
+				},
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'WebServerNIC')]" } ]
+				}
+
+			}
+		},
+		{
+			"name": "application",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/appnic"
+			],
+			"properties": {
+				"hardwareProfile": { "vmSize": "Standard_D1_v2" },
+				"osProfile": {
+					"computerName": "servervm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "2016-Datacenter",
+						"version": "latest"
+					},
+					"osDisk": {
+						"name": "osdiskapp",
+						"createOption": "FromImage"
+					}
+				},
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'appnic')]" } ]
+				}
+
+			}
+		},
+		{
+			"name": "db-box",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2016-04-30-preview",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/sqlnic"
+			],
+			"properties": {
+				"hardwareProfile": {
+					"vmSize": "Standard_DS1_v2"
+				},
+				"osProfile": {
+					"computerName": "sql-vm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftSQLServer",
+						"offer": "SQL2017-WS2016",
+						"sku": "Enterprise",
+						"version": "latest"
+					},
+					"osDisk": {
+						"name": "sqldisk",
+						"createOption": "FromImage"
+					},
+					"dataDisks": [
+						{
+							"name": "datadisk1",
+							"createOption": "Empty",
+							"lun": 0,
+							"diskSizeGB": 512
+
+						}
+					]
+				},
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'sqlnic')]" } ]
+				}
+
+			}
+		}
+	],
+	"outputs": {}
+}

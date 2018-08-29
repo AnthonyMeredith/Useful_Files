@@ -1,0 +1,833 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "variables": {
+    "apiVersion": "2015-06-15",
+
+    "bastionSubnetName": "[concat(parameters('bastionServerName'), '-sub')]",
+    "webServerSubnetName": "[concat(parameters('webServerName'), '-sub')]",
+    "applicationSubnetName": "[concat(parameters('applicationServerName'), '-sub')]",
+    "sqlSubnetName": "[concat(parameters('sqlServerName'), '-sub')]",
+
+    "loadBalancerIpName": "[concat(parameters('LbName'), '-ip')]",
+    "bastionIpName": "[concat(parameters('bastionServerName'), '-ip')]",
+
+
+
+    "bastionNicName": "[concat(parameters('bastionServerName'), '-NIC')]",
+    "webServerNicName": "[concat(parameters('webServerName'), '-NIC')]",
+    "applicationNicName": "[concat(parameters('applicationServerName'), 'NIC')]",
+    "sqlNic": "[concat(parameters('sqlServerName'), 'NIC')]",
+
+
+
+    "bastionNsgName": "[concat(parameters('bastionServerName'), '-NSG')]",
+    "webServerNsgName": "[concat(parameters('webServerName'), '-NSG')]",
+    "applicationNsgName": "[concat(parameters('applicationServerName'), '-NSG')]",
+    "sqlNsgName": "[concat(parameters('sqlServerName'), '-NSG')]",
+
+    "securityGroupRef": "Microsoft.Network/networkSecurityGroups/",
+    "networkResourceRef": "Microsoft.Network/virtualNetworks/",
+
+    "vNetIDRef": "[resourceId('Microsoft.Network/virtualNetworks', parameters('vnetName'))]",
+    "bastionSubnetRef": "[concat(variables('vNetIDRef'),'/subnets/',variables('bastionSubnetName'))]",
+    "webServerSubnetRef": "[concat(variables('vNetIDRef'),'/subnets/',variables('webServerSubnetName'))]",
+    "applicationSubnetRef": "[concat(variables('vNetIDRef'),'/subnets/',variables('applicationSubnetName'))]",
+    "sqlSubnetRef": "[concat(variables('vNetIDRef'),'/subnets/',variables('sqlSubnetName'))]"
+
+
+  },
+  "parameters": {
+    "location": {
+      "type": "string"
+    },
+    "standardStorageAccountName": {
+      "type": "string"
+    },
+    "bastionServerName": {
+      "type": "string"
+    },
+    "webServerName": {
+      "type": "string"
+    },
+    "applicationServerName": {
+      "type": "string"
+    },
+    "sqlServerName": {
+      "type": "string"
+    },
+    "LbName": {
+      "type": "string"
+    },
+    "vnetName": {
+      "type": "string"
+    },
+    "subnetPrefixAddresses": {
+      "type": "array"
+    },
+    "storageAccountType": {
+      "type": "string"
+    },
+    "serverVmSize": {
+      "type": "string"
+    },
+    "databaseVmSize": {
+      "type": "string"
+    },
+    "windowsimagePublisher": {
+      "type": "string"
+    },
+    "windowsimageOffer": {
+      "type": "string"
+    },
+    "windowsOSVersion": {
+      "type": "string"
+    },
+    "sqlImagePublisher": {
+      "type": "string"
+    },
+    "sqlImageOffer": {
+      "type": "string"
+    },
+    "sqlOSVersion": {
+      "type": "string"
+    },
+    "sqlConnectivityType": {
+      "type": "string"
+    },
+    "sqlPortNumber": {
+      "type": "string"
+    },
+    "diskSize": {
+      "type": "int"
+    },
+    "sqlAutopatchingDayOfWeek": {
+      "type": "string"
+    },
+    "sqlAutopatchingStartHour": {
+      "type": "string"
+    },
+    "sqlAutopatchingWindowDuration": {
+      "type": "string"
+    },
+    "imageVersion": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "securestring"
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('standardStorageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "[variables('apiVersion')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "[parameters('vnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat(variables('securityGroupRef'), variables('bastionNsgName'))]",
+        "[concat(variables('securityGroupRef'), variables('webServerNsgName'))]",
+        "[concat(variables('securityGroupRef'), variables('applicationNsgName'))]",
+        "[concat(variables('securityGroupRef'), variables('sqlNsgName'))]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.0.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('bastionSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefixAddresses')[0]]",
+              "networksecuritygroup": {
+                "id": "[concat(resourceId(variables('securityGroupRef'), variables('bastionNsgName')))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('webServerSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefixAddresses')[1]]",
+              "networksecuritygroup": {
+                "id": "[concat(resourceId(variables('securityGroupRef'), variables('webServerNsgName')))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('applicationSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefixAddresses')[2]]",
+              "networksecuritygroup": {
+                "id": "[concat(resourceId(variables('securityGroupRef'), variables('applicationNsgName')))]"
+              }
+            }
+          },
+          {
+            "name": "[variables('sqlSubnetName')]",
+            "properties": {
+              "addressPrefix": "[parameters('subnetPrefixAddresses')[3]]",
+              "networksecuritygroup": {
+                "id": "[concat(resourceId(variables('securityGroupRef'), variables('sqlNsgName')))]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('bastionIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "publicIPAllocationMethod": "Dynamic",
+        "dnsSettings": {
+          "domainNameLabel": "anthonydomain"
+        }
+      }
+    },
+    {
+      "name": "[variables('loadBalancerIpName')]",
+      "type": "Microsoft.Network/publicIPAddresses",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "publicIPAllocationMethod": "Static"
+      }
+    },
+    {
+      "name": "[variables('bastionNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-rdp-bastion",
+            "properties": {
+              "priority": 100,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "185.38.247.178",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "block-inbound-bastion",
+            "properties": {
+              "priority": 999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          },
+          {
+            "name": "allow-rdp-Outbound",
+            "properties": {
+              "priority": 200,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Outbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "block-outbound-bastion",
+            "properties": {
+              "priority": 1999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Outbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('webServerNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-rdp-WS",
+            "properties": {
+              "priority": 100,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "allow-http-WS",
+            "properties": {
+              "priority": 200,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "80"
+            }
+          },
+          {
+            "name": "allow-https-WS",
+            "properties": {
+              "priority": 300,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "443"
+            }
+          },
+          {
+            "name": "block-inbound-WS",
+            "properties": {
+              "priority": 999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          },
+          {
+            "name": "block-outbound-WS",
+            "properties": {
+              "priority": 1999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Outbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('applicationNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "[parameters('location')]",
+      "apiVersion": "2017-06-01",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-rdp-application",
+            "properties": {
+              "priority": 100,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "block-inbound-application",
+            "properties": {
+              "priority": 999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          },
+          {
+            "name": "block-outbound-application",
+            "properties": {
+              "priority": 1999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Outbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('sqlNsgName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-rdp-database",
+            "properties": {
+              "priority": 100,
+              "protocol": "Tcp",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "block-inbound-database",
+            "properties": {
+              "priority": 999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          },
+          {
+            "name": "block-outbound-database",
+            "properties": {
+              "priority": 1999,
+              "protocol": "*",
+              "access": "Deny",
+              "direction": "Outbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "*"
+            }
+          }
+        ]
+      }
+    },
+
+    {
+      "name": "[variables('bastionNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('bastionIpName'))]",
+        "[concat(variables('networkResourceRef'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "[concat('bastionIpName', '-config')]",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[concat(resourceId('Microsoft.Network/publicIPAddresses', variables('bastionIpName')))]"
+              },
+              "subnet": {
+                "id": "[variables('bastionSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('webServerNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('bastionIpName'))]",
+        "[concat(variables('networkResourceRef'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ws-ip-config",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('webServerSubnetRef')]"
+              },
+              "loadBalancerBackendAddressPools": [
+                {
+                  "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), '/backendAddressPools/loadBalancerBackEnd')]"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('applicationNicName')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat(variables('networkResourceRef'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "application-ip-config",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('applicationSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('sqlNic')]",
+      "type": "Microsoft.Network/networkInterfaces",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat(variables('networkResourceRef'), parameters('vnetName'))]"
+      ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "sql-ip-config",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('sqlSubnetRef')]"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('LbName')]",
+      "type": "Microsoft.Network/loadBalancers",
+      "location": "[parameters('location')]",
+      "apiVersion": "[variables('apiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/publicIPAddresses/', variables('loadBalancerIpName'))]"
+      ],
+      "properties": {
+        "frontendIPConfigurations": [
+          {
+            "name": "loadBalancerFrontEnd",
+            "properties": {
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses',  variables('loadBalancerIpName'))]"
+              }
+            }
+          }
+        ],
+        "backendAddressPools": [
+          {
+            "name": "loadBalancerBackEnd"
+          }
+        ],
+        "loadBalancingRules": [
+          {
+            "name": "lb-rule-http",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), concat('/frontendIPConfigurations/','LoadBalancerFrontEnd'))]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), concat('/backendAddressPools/', 'loadBalancerBackEnd'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 80,
+              "backendPort": 80,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "SourceIP",
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), '/probes/http-probe')]"
+              }
+            }
+          },
+          {
+            "name": "lb-rule-https",
+            "properties": {
+              "frontendIPConfiguration": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), concat('/frontendIPConfigurations/','LoadBalancerFrontEnd'))]"
+              },
+              "backendAddressPool": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), concat('/backendAddressPools/', 'loadBalancerBackEnd'))]"
+              },
+              "protocol": "Tcp",
+              "frontendPort": 443,
+              "backendPort": 443,
+              "enableFloatingIP": false,
+              "idleTimeoutInMinutes": 5,
+              "loadDistribution": "SourceIP",
+              "probe": {
+                "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('LbName')), '/probes/https-probe')]"
+              }
+            }
+          }
+        ],
+        "probes": [
+          {
+            "name": "http-probe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 80,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          },
+          {
+            "name": "https-probe",
+            "properties": {
+              "protocol": "Tcp",
+              "port": 443,
+              "intervalInSeconds": 5,
+              "numberOfProbes": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[parameters('bastionServerName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('location')]",
+      "apiVersion": "2017-03-30",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('standardStorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('bastionNicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('serverVmSize')]" },
+        "osProfile": {
+          "computerName": "[parameters('bastionServerName')]",
+          "adminUsername": "[parameters('username')]",
+          "adminPassword": "[parameters('password')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('windowsimagePublisher')]",
+            "offer": "[parameters('windowsimageOffer')]",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "[parameters('imageVersion')]"
+          },
+          "osDisk": {
+            "name": "bastion-os-disk",
+            "createOption": "FromImage"
+          }
+        },
+        "NetworkProfile": {
+          "networkInterfaces": [ { "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', variables('bastionNicName')))]" } ]
+        }
+
+      }
+    },
+    {
+      "name": "[parameters('webServerName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('location')]",
+      "apiVersion": "2017-03-30",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('standardStorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('webServerNicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('serverVmSize')]" },
+        "osProfile": {
+          "computerName": "[parameters('webServerName')]",
+          "adminUsername": "[parameters('username')]",
+          "adminPassword": "[parameters('password')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('windowsimagePublisher')]",
+            "offer": "[parameters('windowsimageOffer')]",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "[parameters('imageVersion')]"
+          },
+          "osDisk": {
+            "name": "ws-os-disk",
+            "createOption": "FromImage"
+          }
+        },
+        "NetworkProfile": {
+          "networkInterfaces": [ { "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', variables('webServerNicName')))]" } ]
+        }
+
+      }
+    },
+    {
+      "name": "[parameters('applicationServerName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('location')]",
+      "apiVersion": "2017-03-30",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('standardStorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('applicationNicName'))]"
+      ],
+      "properties": {
+        "hardwareProfile": { "vmSize": "[parameters('serverVmSize')]" },
+        "osProfile": {
+          "computerName": "[parameters('applicationServerName')]",
+          "adminUsername": "[parameters('username')]",
+          "adminPassword": "[parameters('password')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('windowsimagePublisher')]",
+            "offer": "[parameters('windowsimageOffer')]",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "[parameters('imageVersion')]"
+          },
+          "osDisk": {
+            "name": "application-os-disk",
+            "createOption": "FromImage"
+          }
+        },
+        "NetworkProfile": {
+          "networkInterfaces": [ { "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', variables('applicationNicName')))]" } ]
+        }
+
+      }
+    },
+    {
+      "name": "[parameters('sqlServerName')]",
+      "type": "Microsoft.Compute/virtualMachines",
+      "location": "[parameters('location')]",
+      "apiVersion": "2017-03-30",
+      "dependsOn": [
+        "[concat('Microsoft.Storage/storageAccounts/', parameters('standardStorageAccountName'))]",
+        "[concat('Microsoft.Network/networkInterfaces/', variables('sqlNic'))]"
+      ],
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('databaseVmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[parameters('sqlServerName')]",
+          "adminUsername": "[parameters('username')]",
+          "adminPassword": "[parameters('password')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('sqlImagePublisher')]",
+            "offer": "[parameters('sqlImageOffer')]",
+            "sku": "[parameters('sqlOSVersion')]",
+            "version": "[parameters('imageVersion')]"
+          },
+          "osDisk": {
+            "name": "sql-os-disk",
+            "createOption": "FromImage"
+          },
+          "dataDisks": [
+            {
+              "name": "data-disk-1",
+              "createOption": "Empty",
+              "lun": 0,
+              "diskSizeGB": "[parameters('diskSize')]"
+
+            }
+          ]
+        },
+        "NetworkProfile": {
+          "networkInterfaces": [ { "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', variables('sqlNic')))]" } ]
+        }
+
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('sqlServerName'), '/SqlIaasExtension')]",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlServerName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('sqlServerName'))]"
+      ],
+      "properties": {
+        "type": "SqlIaaSAgent",
+        "publisher": "Microsoft.SqlServer.Management",
+        "typeHandlerVersion": "1.2",
+        "autoUpgradeMinorVersion": "true",
+        "settings": {
+          "AutoTelemetrySettings": {
+            "Region": "[parameters('location')]"
+          },
+          "AutoPatchingSettings": {
+            "PatchCategory": "WindowsMandatoryUpdates",
+            "Enable": true,
+            "DayOfWeek": "[parameters('sqlAutopatchingDayOfWeek')]",
+            "MaintenanceWindowStartingHour": "[parameters('sqlAutopatchingStartHour')]",
+            "MaintenanceWindowDuration": "[parameters('sqlAutopatchingWindowDuration')]"
+          },
+          "KeyVaultCredentialSettings": {
+            "Enable": false,
+            "CredentialName": ""
+          },
+          "ServerConfigurationsManagementSettings": {
+            "SQLConnectivityUpdateSettings": {
+              "ConnectivityType": "[parameters('sqlConnectivityType')]",
+              "Port": "[parameters('sqlPortNumber')]"
+            }
+          }
+        },
+        "protectedSettings": {}
+      }
+    }
+  ],
+  "outputs": {}
+}

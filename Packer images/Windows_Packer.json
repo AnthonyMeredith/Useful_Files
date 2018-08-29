@@ -1,0 +1,49 @@
+{
+  "builders": [
+    {
+      "type": "azure-arm",
+
+      "client_id": "76cf1c37-1efb-4732-852c-822c80daf4dd",
+      "client_secret": "P@ssw0rd!",
+      "tenant_id": "eaecf0d8-a78a-45b6-a9b1-393398fb1e1a",
+      "subscription_id": "a01854cc-7e88-4f1c-aa25-c59ec25391e4",
+      "object_id": "95c22621-998a-4eef-b4b3-b426991dc8ec",
+
+      "managed_image_resource_group_name": "myResourceGroup",
+      "managed_image_name": "CI_CD_Training",
+
+      "os_type": "Windows",
+      "image_publisher": "MicrosoftSQLServer",
+      "image_offer": "SQL2017-WS2016",
+      "image_sku": "Enterprise",
+
+      "communicator": "winrm",
+      "winrm_use_ssl": "true",
+      "winrm_insecure": "true",
+      "winrm_timeout": "3m",
+      "winrm_username": "packer",
+
+      "azure_tags": {
+        "dept": "Engineering",
+        "task": "Image deployment"
+      },
+
+      "location": "East US",
+      "vm_size": "Standard_D4S_v3"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "C:\\Users\\AnthonyMeredith\\Desktop\\Windows_CI_CD_Training\\scripts",
+      "destination": "C:\\scripts"
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"C:\\scripts\\Install-OctopusDeploy.ps1 -SqlUsername 'buildserver\techtest' -SqlPassword 'Password1234' -OctopusAdminUsername ${var.buildserver_user} -OctopusAdminPassword ${var.buildserver_password}\"",
+        "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"C:\\scripts\\Environment_Creation.ps1 -OctopusUsername techtest -OctopusPassword Password1234\""
+      ]
+    }
+  ]
+}

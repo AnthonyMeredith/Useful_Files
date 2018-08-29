@@ -1,0 +1,259 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"variables": {},
+	"parameters": {},
+	"resources": [
+		{
+			"name": "anthonystore",
+			"type": "Microsoft.Storage/storageAccounts",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"properties": {
+				"accountType": "Standard_LRS"
+			}
+		},
+		{
+			"name": "vnet",
+			"type": "Microsoft.Network/virtualNetworks",
+			"location": "West Europe",
+			"apiVersion": "2017-06-01",
+			"properties": {
+				"addressSpace": {
+					"addressPrefixes": [
+						"10.0.0.0/16"
+					]
+				},
+				"subnets": [
+					{
+						"name": "publicsubnet",
+						"properties": {
+							"addressPrefix": "10.0.0.0/24",
+							"networksecuritygroup": {
+								"id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'anthonyNSG')]"
+							}
+						}
+					},
+					{
+						"name": "privatesubnet",
+						"properties": {
+							"addressPrefix": "10.0.1.0/24"
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "anthonypubip",
+			"type": "Microsoft.Network/publicIPAddresses",
+			"location": "West Europe",
+			"apiVersion": "2017-10-01",
+			"properties": {
+				"publicIPAllocationMethod": "Dynamic",
+				"dnsSettings": {
+					"domainNameLabel": "anthonydomain"
+				}
+			}
+		},
+		{
+			"name": "anthonyNSG",
+			"type": "Microsoft.Network/networkSecurityGroups",
+			"apiVersion": "2017-06-01",
+			"location": "West Europe",
+			"properties": {
+				"securityRules": [
+					{
+						"name": "allow-rdp-internet",
+						"properties": {
+							"priority": 100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "185.38.247.178",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "3389"
+						}
+					},
+					{
+						"name": "block-all-inbound",
+						"properties": {
+							"priority": 999,
+							"protocol": "Tcp",
+							"access": "Deny",
+							"direction": "Inbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					},
+					{
+						"name": "allow-http-internet",
+						"properties": {
+							"priority": 1100,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "INTERNET",
+							"destinationPortRange": "80"
+						}
+					},
+					{
+						"name": "allow-https-internet",
+						"properties": {
+							"priority": 1200,
+							"protocol": "Tcp",
+							"access": "Allow",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "443"
+						}
+					},
+					{
+						"name": "block-all-outbound",
+						"properties": {
+							"priority": 1999,
+							"protocol": "*",
+							"access": "Deny",
+							"direction": "Outbound",
+							"sourceAddressPrefix": "*",
+							"sourcePortRange": "*",
+							"destinationAddressPrefix": "*",
+							"destinationPortRange": "*"
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "anthonynic",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/publicIPAddresses/anthonypubip",
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "testipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"publicIPAddress": {
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses', 'anthonypubip')]"
+							},
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/publicsubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "sqlnic",
+			"type": "Microsoft.Network/networkInterfaces",
+			"location": "West Europe",
+			"apiVersion": "2015-06-15",
+			"dependsOn": [
+				"Microsoft.Network/VirtualNetworks/vnet"
+			],
+			"properties": {
+				"ipConfigurations": [
+					{
+						"name": "sqlipconfig",
+						"properties": {
+							"privateIPAllocationMethod": "Dynamic",
+							"subnet": {
+								"id": "[concat(resourceId('Microsoft.Network/virtualNetworks', 'vnet'), '/subnets/privatesubnet')]"
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"name": "frontend",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/anthonynic"
+			],
+			"properties": {
+				"hardwareProfile": { "vmSize": "Standard_D1_v2" },
+				"osProfile": {
+					"computerName": "servervm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftWindowsServer",
+						"offer": "WindowsServer",
+						"sku": "2016-Datacenter",
+						"version": "latest"
+					},
+					"osDisk": {
+						"name": "osdisk",
+						"createOption": "FromImage"
+					}
+				},
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'anthonynic')]" } ]
+				}
+
+			}
+		},
+		{
+			"name": "backend",
+			"type": "Microsoft.Compute/virtualMachines",
+			"location": "West Europe",
+			"apiVersion": "2016-04-30-preview",
+			"dependsOn": [
+				"Microsoft.Storage/storageAccounts/anthonystore",
+				"Microsoft.Network/networkInterfaces/sqlnic"
+			],
+			"properties": {
+				"hardwareProfile": { 
+					"vmSize": "Standard_DS1_v2"
+				},
+				"osProfile": {
+					"computerName": "sql-vm",
+					"adminUsername": "anthony",
+					"adminPassword": "Password1234",
+					"windowsConfiguration": {
+						"provisionVmAgent": "true"
+					}
+				},
+				"storageProfile": {
+					"imageReference": {
+						"publisher": "MicrosoftSQLServer",
+						"offer": "SQL2017-WS2016",
+						"sku": "Enterprise",
+						"version": "latest"
+					},	
+					"osDisk": {
+						"name": "sqldisk",
+						"createOption": "FromImage"
+					}
+				},		
+				"NetworkProfile": {
+					"networkInterfaces": [ { "id": "[resourceId('Microsoft.Network/networkInterfaces', 'sqlnic')]" } ]
+				}
+
+			}
+		}
+	],
+	"outputs": {}
+}

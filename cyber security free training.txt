@@ -1,0 +1,28 @@
+Free Cyber Security Training
+
+https://www.cybrary.it (https://www.cybrary.it/)/
+https://kali.training (https://kali.training/)
+http://www.open.edu/openlearn/futurelearn/cyber-security
+https://www.futurelearn.com/courses/introduction-to-cyber-security
+https://www.gov.uk/government/collections/cyber-security-training-for-business
+http://www.tomsitpro.com/articles/free-infosec-training-for-it-pros,1-2707.html
+http://www.cyberaces.org/courses/
+https://heimdalsecurity.com/blog/50-cyber-security-online-courses-you-should-know-about/
+https://www.ucisa.ac.uk/groups/exec/infosec_training
+http://mooc.fi/courses/2017/cybersecurity/
+https://www.edx.org/course?search_query=security
+https://www.securitydegreehub.com/top-free-online-security-courses/
+
+Cyber Attack Maps
+
+https://cybermap.kaspersky.com/
+http://map.norsecorp.com/#/
+https://threatmap.checkpoint.com/ThreatPortal/livemap.html
+http://www.digitalattackmap.com/
+https://www.fireeye.com/cyber-map/threat-map.html
+https://threatmap.fortiguard.com/
+https://www.akamai.com/us/en/solutions/intelligent-platform/visualizing-akamai/real-time-web-monitor.jsp
+http://www.shadowserver.org/wiki/pmwiki.php/Stats/DDoSMaps
+
+
+

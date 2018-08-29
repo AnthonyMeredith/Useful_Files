@@ -1,0 +1,61 @@
+Module 1: Foundational Concepts
+
+Microsoft Azure
+https://azure.microsoft.com/en-us/
+
+Azure Documentation
+https://docs.microsoft.com/en-us/azure/
+
+Azure Pricing Calculator
+https://azure.microsoft.com/en-us/pricing/calculator/
+
+Pluralsight: Cloud Computing - The Big Picture
+https://www.pluralsight.com/courses/cloud-computing
+
+Pluralsight: Understanding the Difference Between Microsoft Azure and Amazon AWS
+https://www.pluralsight.com/courses/understanding-difference-microsoft-azure-amazon-aws
+
+Book: Microsoft Public Cloud Services - Setting Up Your Business in the Cloud (Microsoft Press)
+https://www.microsoftpressstore.com/store/microsoft-public-cloud-services-setting-up-your-business-9780735697058
+
+White Paper: The NIST Definition of Cloud Computing
+http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-145.pdf
+
+CapEx vs. OpEx in the Cloud
+http://www.cio.com/article/2399248/it-organization/how-to-break-down-the-opex-vs--capex-cloud-computing-debate.html
+
+Azure Stack
+https://azure.microsoft.com/en-us/overview/azure-stack/
+
+Office 365
+https://products.office.com/en-us/business/compare-more-office-365-for-business-plans
+
+System Center Virtual Machine Manager (SCVMM)
+https://technet.microsoft.com/en-us/library/gg610610(v=sc.12).aspx
+
+ExpressRoute
+https://azure.microsoft.com/en-us/services/expressroute/
+
+Azure App Service (PaaS)
+https://azure.microsoft.com/en-us/services/app-service/?b=16.51
+
+Azure Virtual Machines (IaaS)
+https://azure.microsoft.com/en-us/services/virtual-machines/?b=16.51b
+
+Azure Free Trial FAQ
+https://azure.microsoft.com/en-us/free/free-account-faq/
+
+Azure SDKs and Tools
+https://azure.microsoft.com/en-us/downloads/
+
+Azure Regions
+https://azure.microsoft.com/en-us/regions/
+
+Azure Service Status
+https://azure.microsoft.com/en-us/status/
+
+Traffic Manager
+https://azure.microsoft.com/en-us/services/traffic-manager/
+
+Azure Products Available By Region
+https://azure.microsoft.com/en-us/regions/services/

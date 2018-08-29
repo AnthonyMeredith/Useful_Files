@@ -1,0 +1,92 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "West Europe"
+    },
+    "standardStorageAccountName": {
+      "value": "anthonystorage"
+    },
+    "bastionServerName": {
+      "value": "bastion-server"
+    },
+    "webServerName": {
+      "value": "web-server"
+    },
+    "applicationServerName": {
+      "value": "app-server"
+    },
+    "sqlServerName": {
+      "value": "sql-server"
+    },
+    "LbName": {
+      "value": "load-balancer"
+    },
+    "vnetName": {
+      "value": "vNet_01"
+    },
+    "subnetPrefixAddresses": {
+      "value": [
+        "10.0.0.0/24",
+        "10.0.1.0/24",
+        "10.0.2.0/24",
+        "10.0.3.0/24"
+      ]
+    },
+    "storageAccountType": {
+      "value": "Standard_LRS"
+    },
+    "serverVmSize": {
+      "value": "Standard_D1_v2"
+    },
+    "databaseVmSize": {
+      "value": "Standard_D1_v2"
+    },
+    "windowsimagePublisher": {
+      "value": "MicrosoftWindowsServer"
+    },
+    "windowsimageOffer": {
+      "value": "WindowsServer"
+    },
+    "windowsOSVersion": {
+      "value": "2016-Datacenter"
+    },
+    "sqlImagePublisher": {
+      "value": "MicrosoftSQLServer"
+    },
+    "sqlImageOffer": {
+      "value": "SQL2017-WS2016"
+    },
+    "sqlOSVersion": {
+      "value": "Enterprise"
+    },
+    "sqlConnectivityType": {
+      "value": "Private"
+    },
+    "sqlPortNumber": {
+      "value": "1433"
+    },
+    "diskSize": {
+      "value": 128
+    },
+    "sqlAutopatchingDayOfWeek": {
+      "value": "Sunday"
+    },
+    "sqlAutopatchingStartHour": {
+      "value": "2"
+    },
+    "sqlAutopatchingWindowDuration": {
+      "value": "60"
+    },
+    "imageVersion": {
+      "value": "latest"
+    },
+    "username": {
+      "value": "anthony"
+    },
+    "password": {
+      "value": null
+    }
+  }
+}
