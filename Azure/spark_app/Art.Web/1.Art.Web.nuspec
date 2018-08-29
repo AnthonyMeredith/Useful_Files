@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>1.Art.Web.nuspec</id>
+    <version>1.0.1</version>
+    <title>1.Art.Web.nuspec</title>
+    <authors>DevOpsGuys</authors>
+    <owners>DevOpsGuys</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Art Rest</description>
+    <releaseNotes>Base line.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+  </metadata>
+</package>

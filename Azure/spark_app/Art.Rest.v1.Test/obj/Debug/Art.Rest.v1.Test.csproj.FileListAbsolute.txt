@@ -1,0 +1,3 @@
+C:\Users\AnthonyMeredith\Desktop\Spark\Art.Rest.v1.Test\obj\Debug\Art.Rest.v1.Test.csproj.CoreCompileInputs.cache
+C:\Users\AnthonyMeredith\Desktop\Spark\Art.Rest.v1.Test\obj\Debug\Art.Rest.v1.Test.exe
+C:\Users\AnthonyMeredith\Desktop\Spark\Art.Rest.v1.Test\obj\Debug\Art.Rest.v1.Test.pdb

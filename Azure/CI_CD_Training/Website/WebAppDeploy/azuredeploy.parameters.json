@@ -1,0 +1,33 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appname": {
+      "value": "webAppTestAsp"
+    },
+    "hostingPlanName": {
+      "value": "FreeTier"
+    },
+    "hostingEnvironment": {
+      "value": ""
+    },
+    "location": {
+      "value": "West Europe"
+    },
+    "sku": {
+      "value": "Free"
+    },
+    "skuCode": {
+      "value": "F1"
+    },
+    "workerSize": {
+      "value": "0"
+    },
+    "serverFarmResourceGroup": {
+      "value": "webAppTestAsp"
+    },
+    "subscriptionId": {
+      "value": "a01854cc-7e88-4f1c-aa25-c59ec25391e4"
+    }
+  }
+}

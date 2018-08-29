@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "CI/CD Training";
+}
+
+<div class="container form-container">
+    <h1>
+        CI/CD Training Login page
+    </h1>
+
+    <form action="/Form/Home">
+        <p>
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+        </p>
+
+        <p>
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+        </p>
+
+        <p> <input type="submit" value="Login"/> </p>
+        <label>
+            <input type="checkbox" checked="checked" name="remember"> Remember me
+        </label>
+    </form>
+</div>

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Art.Rest.v1.Test</id>
+    <version>1.0.1</version>
+    <title>Art.Rest.v1.Test</title>
+    <authors>DevOpsGuys</authors>
+    <owners>DevOpsGuys</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Art Rest</description>
+    <releaseNotes>Base line.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+  </metadata>
+</package>

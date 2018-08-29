@@ -1,0 +1,52 @@
+# global
+
+subscription_id = "#{arm_subscription_id}"
+
+client_id = "#{arm_client_id}"
+
+client_secret = "#{arm_client_secret}"
+
+tenant_id = "#{arm_tenant_id}"
+
+dns_zone_name = "#{}"
+
+dns_resource_group_name = "#{}"
+
+project = "#{}"
+
+# Unique
+
+system_name = "#{}"
+
+env = "#{}"
+
+# network
+location = "#{}"
+
+# dog
+
+dog_offices = "#{}"
+
+# vms
+
+sitecore_management_count = #{}
+
+sitecore_management_size = "#{}"
+
+sitecore_delivery_count = #{}
+
+sitecore_delivery_size = "#{}"
+
+webserver_username = "#{}"
+
+webserver_password = "#{}"
+
+#SQL
+
+sql_user = "#{}"
+
+sql_password = "#{}"
+
+sql_edition = "#{}"
+
+sql_rso_name = "#{}"

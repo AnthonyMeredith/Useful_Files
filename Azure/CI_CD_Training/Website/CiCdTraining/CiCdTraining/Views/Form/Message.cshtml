@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "CI/CD Training Response";
+}
+
+<div class="container form-container">
+    <h1>
+        CI/CD Training Response
+    </h1>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container nav-bar">
+            <div class="navbar-header">
+                <a asp-controller="Form" asp-action="Home" class="navbar-brand"><img src="~/DOG_Logo2.png" style="height: 25px;" /></a>
+            </div>
+
+            <div class="navbar-sign_out" style="float: right;">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand">Sign out</a>
+            </div>
+        </div>
+    </nav>
+
+        <h4>@ViewBag.Message</h4>
+
+
+        <p>Please check your email for the IP addresses of the created machine this may take a while so please be patient</p>
+</div>

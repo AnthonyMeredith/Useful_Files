@@ -1,0 +1,136 @@
+﻿.nav-bar {
+    color: black;
+}
+
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+
+/* Custom Modifications to Template Above */
+/* Style all input fields */
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #00ADD8;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+    input[type=checkbox] {
+        width: initial !important;
+    }
+
+    /* Style the submit button */
+    input[type=submit] {
+        background-color: #96C11E;
+        color: white;
+    }
+
+/* Style the container for inputs*/
+.form-container {
+    background-color: #F2F4F3;
+    display: block;
+    padding: 15px;
+    border-radius: 0 0 10px 10px;
+}
+
+/* The message box is shown when the user clicks on the password field */
+#message {
+    display: none;
+    background: #D2D1CE;
+    color: #2C3B45;
+    position: relative;
+    padding: 20px;
+    margin-top: 0;
+    position: relative;
+    top: -10px;
+    z-index: -10;
+    border-radius: 0 0 10px 10px;
+}
+
+    #message p {
+        padding: 10px 35px;
+        font-size: 18px;
+    }
+
+/* Add a green text color and a checkmark when the requirements are right */
+.valid {
+    color: #4C8B32;
+}
+
+    .valid:before {
+        position: relative;
+        left: -35px;
+        content: "✔";
+    }
+
+/* Add a red text color and an "x" when the requirements are wrong */
+.invalid {
+    color: #E62075;
+}
+
+    .invalid:before {
+        position: relative;
+        left: -35px;
+        content: "✖";
+    }
+
+.navbar-inverse {
+    background-color: #96C11E;
+    border-color: #00ADD8;
+}
+
+    .navbar-inverse .navbar-brand {
+        color: #2C3B45;
+    }
+
+    .navbar-inverse .navbar-nav > li > a {
+        color: #2C3B45;
+    }
+
+
+html {
+    font-family: "Gill Sans MT";
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+body {
+    font-family: "Gill Sans MT";
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #2C3B45;
+    background-color: #fff;
+}
+
+[role="button"] {
+    cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: "Gill Sans MT";
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
