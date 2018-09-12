@@ -12,6 +12,17 @@ https://www.ucisa.ac.uk/groups/exec/infosec_training
 http://mooc.fi/courses/2017/cybersecurity/
 https://www.edx.org/course?search_query=security
 https://www.securitydegreehub.com/top-free-online-security-courses/
+https://www.ucisa.ac.uk/groups/exec/infosec_training
+http://mooc.fi/courses/2017/cybersecurity/
+https://www.youtube.com/playlist?list=PLnjNR4-S-EVqfJWovxEJyb7I0IOkKkoYM
+Searching Eventbrite can sometimes provide free training events in your area.... https://www.eventbrite.co.uk/
+https://www.learnpython.org/
+https://mva.microsoft.com/
+https://www.cyberbit.com/blog/security-training/5-free-cyber-security-training-tools-ir-team-must-use/
+https://www.whitehatsec.com/events-category/upcoming-webinars/certified-secure-developer/
+https://www.manageengine.com/products/passwordmanagerpro/password-manager-pro-training.html
+https://www.immersivelabs.com/
+https://dca.immersivelabs.online/register
 
 Cyber Attack Maps
 
@@ -23,6 +34,11 @@ https://www.fireeye.com/cyber-map/threat-map.html
 https://threatmap.fortiguard.com/
 https://www.akamai.com/us/en/solutions/intelligent-platform/visualizing-akamai/real-time-web-monitor.jsp
 http://www.shadowserver.org/wiki/pmwiki.php/Stats/DDoSMaps
+
+Remediation from attacks
+
+ https://www.f5.com/pdf/products/silverline-ddos-datasheet.pdf
+
 
 
 

@@ -13594,11 +13594,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\AnthonyMeredith\\Desktop\\Windows_CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\CiCdTraining.csproj",
+      "projectUniqueName": "C:\\Users\\AnthonyMeredith\\Desktop\\Useful_files\\Azure\\CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\CiCdTraining.csproj",
       "projectName": "CiCdTraining",
-      "projectPath": "C:\\Users\\AnthonyMeredith\\Desktop\\Windows_CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\CiCdTraining.csproj",
+      "projectPath": "C:\\Users\\AnthonyMeredith\\Desktop\\Useful_files\\Azure\\CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\CiCdTraining.csproj",
       "packagesPath": "C:\\Users\\AnthonyMeredith\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\AnthonyMeredith\\Desktop\\Windows_CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\obj\\",
+      "outputPath": "C:\\Users\\AnthonyMeredith\\Desktop\\Useful_files\\Azure\\CI_CD_Training\\Website\\CiCdTraining\\CiCdTraining\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

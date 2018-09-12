@@ -174,8 +174,8 @@ resource "azurerm_virtual_machine" "CICD" {
 
     inline = [
       "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Install-TeamCity.ps1 -AdminPassword ${var.CICD_password}\"",
-      "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Install-OctopusDeploy.ps1 -SqlUsername ${var.sql_user} -SqlPassword ${var.CICD_password} -OctopusAdminUsername ${var.CICD_user} -OctopusAdminPassword ${var.CICD_password}\"",
-      "powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Environment_Creation.ps1 -OctopusUsername ${var.CICD_user} -OctopusPassword ${var.CICD_password}\""
+      #"powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Install-OctopusDeploy.ps1 -SqlUsername ${var.sql_user} -SqlPassword ${var.CICD_password} -OctopusAdminUsername ${var.CICD_user} -OctopusAdminPassword ${var.CICD_password}\"",
+      #"powershell.exe -sta -ExecutionPolicy Unrestricted -command \"D:\\scripts\\Environment_Creation.ps1 -OctopusUsername ${var.CICD_user} -OctopusPassword ${var.CICD_password}\""
     ]
   }
 }

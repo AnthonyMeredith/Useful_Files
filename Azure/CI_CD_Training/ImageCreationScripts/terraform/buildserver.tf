@@ -7,7 +7,7 @@ resource "azurerm_resource_group" "main_resource_group" {
   location = "${var.resourcegroup_location}"
 }
 
-# Locate the existing custom/golden image
+# Locate the existing custom/golden image this will update an existing image so decomment if needed
 
 #data "azurerm_image" "search" {
 #  name                = "${var.image_name}"
